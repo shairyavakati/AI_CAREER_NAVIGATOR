@@ -13,15 +13,17 @@ import { QuizInterface } from './components/QuizInterface';
 import { RevisionSystemVisual } from './components/RevisionSystemVisual';
 import { SkillEvolution } from './components/SkillEvolution';
 import { ResourceRecommendation } from './components/ResourceRecommendation';
+import { EducationDetails } from './components/EducationDetails';
 import { BarChart3, Trophy, Calendar, Home, BookOpen, TrendingUp, Library, Zap, Menu, X, LogOut } from 'lucide-react';
 import { isLoggedIn, logout, getProfile } from './api';
 
 type Screen =
   | 'landing'
   | 'login'
+  | 'education'
+  | 'assessment'
   | 'role'
   | 'time'
-  | 'assessment'
   | 'gap-analysis'
   | 'learning-path'
   | 'planner'
@@ -48,6 +50,10 @@ export default function App() {
           if (data.user.chosen_role) {
             setCurrentScreen('planner');
             setShowNav(true);
+          } else if (!data.user.education_details) {
+            setCurrentScreen('education');
+          } else if (!data.user.detected_skills) {
+            setCurrentScreen('assessment');
           } else {
             setCurrentScreen('role');
           }
@@ -63,6 +69,10 @@ export default function App() {
     if (userData.chosen_role) {
       setCurrentScreen('planner');
       setShowNav(true);
+    } else if (!userData.education_details) {
+      setCurrentScreen('education');
+    } else if (!userData.detected_skills) {
+      setCurrentScreen('assessment');
     } else {
       setCurrentScreen('role');
     }
@@ -81,12 +91,14 @@ export default function App() {
         return <LandingPage onGetStarted={() => setCurrentScreen('login')} />;
       case 'login':
         return <LoginSignup onLogin={handleLogin} />;
+      case 'education':
+        return <EducationDetails onComplete={() => setCurrentScreen('assessment')} />;
+      case 'assessment':
+        return <SkillAssessment onComplete={() => setCurrentScreen('role')} />;
       case 'role':
         return <RoleSelection onRoleSelect={() => setCurrentScreen('time')} />;
       case 'time':
-        return <TimeSelection onTimeSelect={() => setCurrentScreen('assessment')} />;
-      case 'assessment':
-        return <SkillAssessment onComplete={() => setCurrentScreen('gap-analysis')} />;
+        return <TimeSelection onTimeSelect={() => setCurrentScreen('gap-analysis')} />;
       case 'gap-analysis':
         return <SkillGapAnalysis onContinue={() => setCurrentScreen('learning-path')} />;
       case 'learning-path':

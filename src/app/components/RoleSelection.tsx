@@ -1,22 +1,37 @@
-import { Code, Briefcase, GraduationCap, Users, Loader2 } from 'lucide-react';
-import { useState } from 'react';
-import { selectRole } from '../api';
+import { Code, Briefcase, GraduationCap, Users, Loader2, Sparkles } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { selectRole, listRoles } from '../api';
 
 interface RoleSelectionProps {
   onRoleSelect: (role: string) => void;
 }
 
+const roles = [
+  { id: 'developer', icon: Code, title: 'Software Developer', desc: 'Frontend, Backend, Full Stack', color: '#4F46E5' },
+  { id: 'manager', icon: Briefcase, title: 'Product Manager', desc: 'Strategy, Roadmap, Analytics', color: '#06B6D4' },
+  { id: 'student', icon: GraduationCap, title: 'Student', desc: 'Learning & Development', color: '#8B5CF6' },
+  { id: 'designer', icon: Users, title: 'Designer', desc: 'UI/UX, Visual Design', color: '#10B981' }
+];
+
 export function RoleSelection({ onRoleSelect }: RoleSelectionProps) {
   const [hoveredRole, setHoveredRole] = useState<string | null>(null);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [availableRoles, setAvailableRoles] = useState(roles);
 
-  const roles = [
-    { id: 'developer', icon: Code, title: 'Software Developer', desc: 'Frontend, Backend, Full Stack', color: '#4F46E5' },
-    { id: 'manager', icon: Briefcase, title: 'Product Manager', desc: 'Strategy, Roadmap, Analytics', color: '#06B6D4' },
-    { id: 'student', icon: GraduationCap, title: 'Student', desc: 'Learning & Development', color: '#8B5CF6' },
-    { id: 'designer', icon: Users, title: 'Designer', desc: 'UI/UX, Visual Design', color: '#10B981' }
-  ];
+  useEffect(() => {
+    fetchRoles();
+  }, []);
+
+  const fetchRoles = async () => {
+    try {
+      const data = await listRoles();
+      setSuggestions(data.suggestions || []);
+    } catch (err) {
+      console.error('Failed to fetch roles:', err);
+    }
+  };
 
   const handleSelect = async (roleId: string) => {
     setSelectedRole(roleId);
@@ -90,6 +105,15 @@ export function RoleSelection({ onRoleSelect }: RoleSelectionProps) {
                       {role.desc}
                     </p>
                   </div>
+                  {suggestions.includes(role.id) && (
+                    <div className="px-3 py-1.5 rounded-full flex items-center gap-1.5" 
+                      style={{ background: 'rgba(255,255,255,0.9)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+                      <Sparkles className="w-3.5 h-3.5 text-[#4F46E5]" />
+                      <span style={{ fontSize: '11px', fontWeight: 700, color: '#4F46E5', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Recommended
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             );

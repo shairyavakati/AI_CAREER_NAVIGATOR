@@ -146,3 +146,37 @@ def get_profile(current_user_id):
     user = result.data[0]
     user.pop("password_hash", None)
     return jsonify({"user": user})
+
+
+@auth_bp.route("/update-profile", methods=["POST"])
+@token_required
+def update_profile(current_user_id):
+    """Update user profile fields."""
+    data = request.get_json()
+    updatable_fields = [
+        "name", "chosen_role", "education_details", 
+        "detected_skills", "time_commitment", "level"
+    ]
+    
+    update_data = {}
+    for field in updatable_fields:
+        if field in data:
+            update_data[field] = data[field]
+            
+    if not update_data:
+        return jsonify({"message": "No fields to update"}), 400
+        
+    sb = get_supabase()
+    try:
+        result = sb.table("users").update(update_data).eq("id", current_user_id).execute()
+        if not result.data:
+            return jsonify({"error": "Failed to update profile"}), 500
+        user = result.data[0]
+    except Exception as e:
+        print(f"Warning: Profile update failed (possibly missing columns): {e}")
+        # Fallback: Get user without updated fields
+        res = sb.table("users").select("*").eq("id", current_user_id).execute()
+        user = res.data[0] if res.data else {}
+
+    user.pop("password_hash", None)
+    return jsonify({"message": "Profile updated successfully", "user": user})

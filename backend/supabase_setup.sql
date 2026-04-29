@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash TEXT NOT NULL,
     name TEXT,
     chosen_role TEXT,
+    education_details JSONB,
+    detected_skills TEXT[],
     time_commitment INTEGER DEFAULT 60,
     level TEXT DEFAULT 'Beginner',
     streak_count INTEGER DEFAULT 0,

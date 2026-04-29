@@ -18,9 +18,42 @@ ROLES = [
 
 
 @roles_bp.route("/", methods=["GET"])
-def list_roles():
-    """List all available roles."""
-    return jsonify({"roles": ROLES})
+@token_required
+def list_roles(current_user_id):
+    """List all available roles with suggestions based on detected skills."""
+    sb = get_supabase()
+    detected = []
+    
+    try:
+        user_result = sb.table("users").select("detected_skills").eq("id", current_user_id).execute()
+        detected = user_result.data[0].get("detected_skills", []) if user_result.data else []
+    except Exception as e:
+        print(f"Warning: Could not fetch detected_skills from users (column might be missing): {e}")
+        # Fallback: Try to get it from the latest evaluation
+        try:
+            eval_result = sb.table("evaluations").select("quiz_data").eq("user_id", current_user_id).order("created_at", desc=True).limit(1).execute()
+            if eval_result.data:
+                detected = eval_result.data[0].get("quiz_data", {}).get("detected", [])
+        except Exception as e2:
+            print(f"Warning: Fallback to evaluations also failed: {e2}")
+    
+    # Simple heuristic for role suggestion
+    suggestions = []
+    if any(s in ["Python", "JavaScript", "Mobile Dev", "React Native"] for s in detected):
+        suggestions.append("developer")
+    if any(s in ["Management", "Agile"] for s in detected):
+        suggestions.append("manager")
+    if any(s in ["Web Design", "UI/UX"] for s in detected):
+        suggestions.append("designer")
+        
+    if not suggestions:
+        suggestions = ["student"]
+
+    return jsonify({
+        "roles": ROLES,
+        "suggestions": suggestions,
+        "detected_skills": detected
+    })
 
 
 @roles_bp.route("/select", methods=["POST"])

@@ -43,6 +43,13 @@ QUESTION_BANK = {
         {"question": "What is a design system?", "options": ["A type of software", "A collection of reusable design components and guidelines", "A project management tool", "A color picker"], "correct": 1},
         {"question": "What is prototyping?", "options": ["Final product deployment", "Creating interactive mockups for testing", "Writing code", "User research"], "correct": 1},
     ],
+    "initial": [
+        {"question": "Which of these programming languages are you familiar with?", "options": ["None", "Python", "JavaScript", "Both Python & JS"], "correct": None, "type": "skill_detect", "skills": ["Python", "JavaScript"]},
+        {"question": "Do you have experience with Web Design?", "options": ["No", "Basic (HTML/CSS)", "Intermediate (Figma/Layouts)", "Expert"], "correct": None, "type": "skill_detect", "skills": ["Web Design", "UI/UX"]},
+        {"question": "Are you familiar with Data Analysis?", "options": ["No", "Basic Excel", "Intermediate (SQL/Pandas)", "Advanced Statistics"], "correct": None, "type": "skill_detect", "skills": ["Data Analysis", "SQL"]},
+        {"question": "What is your comfort level with Project Management?", "options": ["None", "Have led small teams", "Familiar with Agile/Scrum", "Experienced PM"], "correct": None, "type": "skill_detect", "skills": ["Management", "Agile"]},
+        {"question": "Do you have experience with Mobile Development?", "options": ["No", "Basic React Native/Flutter", "Intermediate", "Published Apps"], "correct": None, "type": "skill_detect", "skills": ["Mobile Dev", "React Native"]},
+    ]
 }
 
 
@@ -54,11 +61,14 @@ def get_questions(current_user_id):
 
     # Get user's role
     user_result = sb.table("users").select("chosen_role").eq("id", current_user_id).execute()
-    if not user_result.data or not user_result.data[0].get("chosen_role"):
-        return jsonify({"error": "Please select a role first"}), 400
-
-    role = user_result.data[0]["chosen_role"]
-    questions = QUESTION_BANK.get(role, QUESTION_BANK["developer"])
+    
+    role = user_result.data[0].get("chosen_role") if user_result.data else None
+    
+    if not role:
+        # Initial assessment
+        questions = QUESTION_BANK["initial"]
+    else:
+        questions = QUESTION_BANK.get(role, QUESTION_BANK["developer"])
 
     # Select up to 10 questions, shuffle
     selected = random.sample(questions, min(10, len(questions)))
@@ -89,14 +99,16 @@ def submit_assessment(current_user_id):
 
     # Get user's role
     user_result = sb.table("users").select("chosen_role").eq("id", current_user_id).execute()
-    role = user_result.data[0]["chosen_role"] if user_result.data else "developer"
+    role = user_result.data[0].get("chosen_role") if user_result.data else None
 
-    questions = QUESTION_BANK.get(role, QUESTION_BANK["developer"])
+    is_initial = role is None
+    questions = QUESTION_BANK.get(role, QUESTION_BANK["developer"]) if role else QUESTION_BANK["initial"]
 
-    # Calculate score
+    # Calculate score and detect skills
     correct = 0
     total_scored = 0
     self_assess_scores = []
+    detected_skills = []
 
     for answer in answers:
         qid = answer.get("question_id", 0)
@@ -105,8 +117,11 @@ def submit_assessment(current_user_id):
         if qid < len(questions):
             q = questions[qid]
             if q.get("type") == "self_assess":
-                # Self-assessment: higher option = higher skill (0-3 scale → 0-100)
                 self_assess_scores.append(selected * 33)
+            elif q.get("type") == "skill_detect":
+                # If they picked anything other than "None" (option 0)
+                if selected > 0:
+                    detected_skills.extend(q.get("skills", []))
             elif q.get("correct") is not None:
                 total_scored += 1
                 if selected == q["correct"]:
@@ -117,40 +132,46 @@ def submit_assessment(current_user_id):
     avg_self = sum(self_assess_scores) / len(self_assess_scores) if self_assess_scores else 50
     overall_score = int((mcq_score * 0.6) + (avg_self * 0.4))
 
-    # Save evaluation
+    if is_initial:
+        # Save detected skills for initial assessment
+        try:
+            sb.table("users").update({"detected_skills": list(set(detected_skills))}).eq("id", current_user_id).execute()
+        except Exception as e:
+            print(f"Warning: Could not save detected_skills (column might be missing): {e}")
+    else:
+        # Update user skill gaps based on score for specific role
+        skills_result = sb.table("skills").select("*").eq("role", role).execute()
+        for i, skill in enumerate(skills_result.data):
+            variance = random.randint(-15, 15)
+            skill_level = max(0, min(100, overall_score + variance))
+
+            sb.table("user_skill_gaps").update({
+                "current_level": skill_level,
+                "target_level": max(80, skill_level + 20),
+                "status": "mastered" if skill_level >= 80 else "learning" if skill_level >= 40 else "missing"
+            }).eq("user_id", current_user_id).eq("skill_id", skill["id"]).execute()
+
+            sb.table("skill_evolution").insert({
+                "user_id": current_user_id,
+                "skill_id": skill["id"],
+                "level": skill_level
+            }).execute()
+
+    # Save evaluation record
     sb.table("evaluations").insert({
         "user_id": current_user_id,
         "score": overall_score,
         "total_questions": len(answers),
-        "quiz_data": {"answers": answers, "mcq_score": mcq_score, "self_score": avg_self},
+        "quiz_data": {"answers": answers, "mcq_score": mcq_score, "self_score": avg_self, "detected": detected_skills},
         "triggered_redirection": overall_score < 40
     }).execute()
-
-    # Update user skill gaps based on score
-    skills_result = sb.table("skills").select("*").eq("role", role).execute()
-    for i, skill in enumerate(skills_result.data):
-        # Distribute score with some variance
-        variance = random.randint(-15, 15)
-        skill_level = max(0, min(100, overall_score + variance))
-
-        sb.table("user_skill_gaps").update({
-            "current_level": skill_level,
-            "target_level": max(80, skill_level + 20),
-            "status": "mastered" if skill_level >= 80 else "learning" if skill_level >= 40 else "missing"
-        }).eq("user_id", current_user_id).eq("skill_id", skill["id"]).execute()
-
-        # Record initial skill evolution point
-        sb.table("skill_evolution").insert({
-            "user_id": current_user_id,
-            "skill_id": skill["id"],
-            "level": skill_level
-        }).execute()
 
     return jsonify({
         "score": overall_score,
         "mcq_score": int(mcq_score),
         "self_assessment_score": int(avg_self),
+        "detected_skills": list(set(detected_skills)),
         "correct_answers": correct,
         "total_questions": len(answers),
-        "redirection_needed": overall_score < 40
+        "is_initial": is_initial
     })

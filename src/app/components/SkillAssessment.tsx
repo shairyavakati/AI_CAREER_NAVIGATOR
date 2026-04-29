@@ -20,6 +20,7 @@ export function SkillAssessment({ onComplete }: SkillAssessmentProps) {
   const [questions, setQuestions] = useState<AssessmentQuestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [isInitial, setIsInitial] = useState(false);
 
   useEffect(() => {
     loadQuestions();
@@ -29,6 +30,7 @@ export function SkillAssessment({ onComplete }: SkillAssessmentProps) {
     try {
       const data = await getAssessmentQuestions();
       setQuestions(data.questions);
+      setIsInitial(data.is_initial || !localStorage.getItem('chosen_role'));
     } catch (err) {
       console.error('Failed to load questions:', err);
       // Fallback questions
@@ -79,6 +81,15 @@ export function SkillAssessment({ onComplete }: SkillAssessmentProps) {
   return (
     <div className="min-h-screen flex items-center justify-center px-6">
       <div className="w-full max-w-2xl rounded-[20px] p-12 backdrop-blur-[30px] border border-white/30 shadow-[0_8px_32px_rgba(79,70,229,0.12)]" style={{ background: 'rgba(255, 255, 255, 0.75)' }}>
+        <div className="text-center mb-8">
+          <h2 style={{ fontFamily: 'Manrope, sans-serif', fontSize: '28px', fontWeight: 700, color: '#111827', marginBottom: '8px' }}>
+            {isInitial ? 'Skill Discovery' : 'Technical Assessment'}
+          </h2>
+          <p style={{ fontSize: '15px', color: '#6B7280' }}>
+            {isInitial ? 'Let\'s identify your current strengths to suggest the best roles.' : 'Evaluate your proficiency in the selected career path.'}
+          </p>
+        </div>
+
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
             <span className="text-[#6B7280]" style={{ fontSize: '14px', fontWeight: 500 }}>Question {currentQuestion + 1} of {questions.length}</span>
