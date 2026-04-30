@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, Lock, User, Loader2 } from 'lucide-react';
+import { Mail, Lock, User, Loader2, Zap } from 'lucide-react';
 import { signup, login } from '../api';
 
 interface LoginSignupProps {
@@ -34,72 +34,92 @@ export function LoginSignup({ onLogin }: LoginSignupProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6">
+    <div className="min-h-screen flex items-center justify-center px-6 bg-transparent relative overflow-hidden">
+      {/* Background Decorative Elements */}
+      <div className="absolute top-1/4 -left-20 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px]" />
+      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-cyan-500/10 rounded-full blur-[100px]" />
+
       <div
-        className="w-full max-w-md rounded-[20px] p-10 backdrop-blur-[30px] border border-white/30 shadow-[0_8px_32px_rgba(79,70,229,0.12)]"
-        style={{ background: 'rgba(255, 255, 255, 0.75)' }}
+        className="w-full max-w-lg rounded-[32px] p-10 backdrop-blur-[40px] border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.5)] relative z-10"
+        style={{ background: 'rgba(15, 23, 42, 0.65)' }}
       >
-        <h2 className="text-center mb-8" style={{ fontFamily: 'Manrope, sans-serif', fontSize: '30px', fontWeight: 700, color: '#111827' }}>
-          {isSignup ? 'Create Account' : 'Welcome Back'}
-        </h2>
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-indigo-500 to-transparent shadow-[0_0_15px_#6366f1]" />
+        
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold mb-6">
+            <Zap className="w-3.5 h-3.5" />
+            Secure AI Authentication
+          </div>
+          <h2 className="bg-gradient-to-r from-white to-indigo-300 bg-clip-text text-transparent" style={{ fontFamily: 'Inter, sans-serif', fontSize: '36px', fontWeight: 800 }}>
+            {isSignup ? 'Create Identity' : 'Welcome Back'}
+          </h2>
+          <p className="text-slate-400 mt-2 text-sm">Access your personalized AI career roadmap</p>
+        </div>
 
         {error && (
-          <div className="mb-6 p-3 rounded-[12px] text-center" style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#EF4444', fontSize: '14px' }}>
+          <div className="mb-6 p-4 rounded-[16px] text-center bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm animate-shake">
             {error}
           </div>
         )}
 
         <div className="space-y-6">
           {isSignup && (
-            <div>
-              <label className="block mb-2 text-[#111827]" style={{ fontSize: '14px', fontWeight: 500 }}>Full Name</label>
+            <div className="group">
+              <label className="block mb-2 text-slate-300 ml-1" style={{ fontSize: '13px', fontWeight: 600 }}>FULL NAME</label>
               <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B7280]" />
+                <User className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors ${focusedField === 'name' ? 'text-indigo-400' : 'text-slate-500'}`} />
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 rounded-[12px] border-none outline-none transition-all duration-200"
-                  style={{ background: focusedField === 'name' ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.6)', boxShadow: focusedField === 'name' ? 'inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.9), 0 0 0 3px rgba(79,70,229,0.1)' : 'inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.9)' }}
+                  className="w-full pl-12 pr-4 py-3.5 rounded-[16px] border border-white/5 outline-none transition-all duration-300 bg-slate-900/50 text-white placeholder:text-slate-600 focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10"
                   placeholder="Enter your name" onFocus={() => setFocusedField('name')} onBlur={() => setFocusedField(null)} />
               </div>
             </div>
           )}
 
-          <div>
-            <label className="block mb-2 text-[#111827]" style={{ fontSize: '14px', fontWeight: 500 }}>Email</label>
+          <div className="group">
+            <label className="block mb-2 text-slate-300 ml-1" style={{ fontSize: '13px', fontWeight: 600 }}>EMAIL ADDRESS</label>
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B7280]" />
+              <Mail className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors ${focusedField === 'email' ? 'text-indigo-400' : 'text-slate-500'}`} />
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 rounded-[12px] border-none outline-none transition-all duration-200"
-                style={{ background: focusedField === 'email' ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.6)', boxShadow: focusedField === 'email' ? 'inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.9), 0 0 0 3px rgba(79,70,229,0.1)' : 'inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.9)' }}
+                className="w-full pl-12 pr-4 py-3.5 rounded-[16px] border border-white/5 outline-none transition-all duration-300 bg-slate-900/50 text-white placeholder:text-slate-600 focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10"
                 placeholder="Enter your email" onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField(null)} />
             </div>
           </div>
 
-          <div>
-            <label className="block mb-2 text-[#111827]" style={{ fontSize: '14px', fontWeight: 500 }}>Password</label>
+          <div className="group">
+            <label className="block mb-2 text-slate-300 ml-1" style={{ fontSize: '13px', fontWeight: 600 }}>SECURITY PASSWORD</label>
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B7280]" />
+              <Lock className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors ${focusedField === 'password' ? 'text-indigo-400' : 'text-slate-500'}`} />
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 rounded-[12px] border-none outline-none transition-all duration-200"
-                style={{ background: focusedField === 'password' ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.6)', boxShadow: focusedField === 'password' ? 'inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.9), 0 0 0 3px rgba(79,70,229,0.1)' : 'inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.9)' }}
+                className="w-full pl-12 pr-4 py-3.5 rounded-[16px] border border-white/5 outline-none transition-all duration-300 bg-slate-900/50 text-white placeholder:text-slate-600 focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10"
                 placeholder="Enter your password" onFocus={() => setFocusedField('password')} onBlur={() => setFocusedField(null)} />
             </div>
           </div>
 
           <button onClick={handleSubmit} disabled={loading}
-            className="w-full py-4 rounded-[16px] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_12px_40px_rgba(79,70,229,0.3)] disabled:opacity-70"
-            style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)', color: 'white', fontSize: '16px', fontWeight: 600, boxShadow: '0 8px 24px rgba(79, 70, 229, 0.25)' }}>
-            {loading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : (isSignup ? 'Sign Up' : 'Log In')}
+            className="w-full py-4.5 mt-4 rounded-[18px] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(129,140,248,0.4)] disabled:opacity-70 flex items-center justify-center gap-2 group"
+            style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #818CF8 100%)', color: 'white', fontSize: '16px', fontWeight: 700 }}>
+            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (isSignup ? 'Generate Identity' : 'Authorize Access')}
+            {!loading && <Zap className="w-4 h-4 group-hover:animate-pulse" />}
           </button>
         </div>
 
-        <div className="mt-6 text-center">
+        <div className="mt-10 text-center">
           <button onClick={() => { setIsSignup(!isSignup); setError(''); }}
-            className="text-[#4F46E5] transition-colors duration-200 hover:text-[#6366F1]"
-            style={{ fontSize: '14px', fontWeight: 500 }}>
-            {isSignup ? 'Already have an account? Log in' : "Don't have an account? Sign up"}
+            className="text-indigo-400 transition-all duration-200 hover:text-indigo-300 hover:underline decoration-indigo-500/30 underline-offset-4"
+            style={{ fontSize: '14px', fontWeight: 600 }}>
+            {isSignup ? 'Already registered? Log in here' : "New explorer? Create your identity"}
           </button>
         </div>
       </div>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+        }
+        .animate-shake { animation: shake 0.4s ease-in-out; }
+      `}} />
     </div>
   );
 }

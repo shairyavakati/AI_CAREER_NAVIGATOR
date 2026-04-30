@@ -27,9 +27,9 @@ const parseMarkdown = (text: string) => {
       const boldParts = part.split(/(\*\*.*?\*\*)/g);
       return boldParts.map((bPart, bIndex) => {
         if (bPart.startsWith('**') && bPart.endsWith('**')) {
-          return <strong key={`${index}-${bIndex}`} className="font-bold text-gray-900">{bPart.slice(2, -2)}</strong>;
+          return <strong key={`${index}-${bIndex}`} className="font-bold text-indigo-300">{bPart.slice(2, -2)}</strong>;
         }
-        return <span key={`${index}-${bIndex}`}>{bPart}</span>;
+        return <span key={`${index}-${bIndex}`} className="text-slate-200">{bPart}</span>;
       });
     }
   });
@@ -147,31 +147,34 @@ export function Chatbot() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full flex items-center justify-center shadow-[0_8px_32px_rgba(79,70,229,0.3)] z-[100] transition-transform hover:scale-110 active:scale-95"
-        style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)' }}
+        className="fixed bottom-6 right-6 w-16 h-16 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(129,140,248,0.5)] z-[100] transition-all hover:scale-110 active:scale-95 group"
+        style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #818CF8 100%)' }}
       >
-        <MessageSquare className="w-6 h-6 text-white" />
+        <div className="absolute inset-0 rounded-full animate-pulse bg-indigo-400/30 group-hover:bg-indigo-400/50" />
+        <MessageSquare className="w-7 h-7 text-white relative z-10" />
       </button>
     );
   }
 
   return (
     <div 
-      className={`fixed right-6 z-[100] flex flex-col overflow-hidden transition-all duration-300 ease-in-out shadow-[0_8px_32px_rgba(79,70,229,0.2)] rounded-[20px] backdrop-blur-[30px] border border-white/40`}
+      className={`fixed right-6 z-[100] flex flex-col overflow-hidden transition-all duration-300 ease-in-out shadow-[0_0_50px_rgba(0,0,0,0.5)] rounded-[24px] backdrop-blur-[25px] border border-white/10`}
       style={{ 
         bottom: '24px',
-        width: '380px',
-        height: isMinimized ? '60px' : '600px',
+        width: '400px',
+        height: isMinimized ? '70px' : '650px',
         maxHeight: 'calc(100vh - 48px)',
-        background: 'rgba(255, 255, 255, 0.95)'
+        background: 'rgba(15, 23, 42, 0.9)',
+        boxShadow: '0 0 0 1px rgba(129, 140, 248, 0.2), 0 20px 50px rgba(0,0,0,0.4)'
       }}
     >
       {/* Header */}
       <div 
-        className="p-4 flex items-center justify-between border-b border-gray-100 cursor-pointer group"
-        style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)' }}
+        className="p-5 flex items-center justify-between border-b border-white/10 cursor-pointer group relative overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #1E1B4B 0%, #0F172A 100%)' }}
         onClick={() => isMinimized && setIsMinimized(false)}
       >
+        <div className="absolute bottom-0 left-0 h-[2px] bg-indigo-500 w-full shadow-[0_0_10px_#6366f1]" />
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
             <Bot className="w-5 h-5 text-white" />
@@ -207,28 +210,28 @@ export function Chatbot() {
       {/* Chat Area */}
       {!isMinimized && (
         <>
-          <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 bg-gray-50/50">
+          <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-5 bg-transparent">
             {messages.map((msg) => (
               <div 
                 key={msg.id} 
                 className={`flex gap-3 max-w-[85%] ${msg.sender === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`}
               >
-                <div className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center mt-1 ${msg.sender === 'user' ? 'bg-indigo-100' : 'bg-indigo-600'}`}>
+                <div className={`w-9 h-9 shrink-0 rounded-full flex items-center justify-center mt-1 shadow-lg ${msg.sender === 'user' ? 'bg-slate-700' : 'bg-indigo-600 shadow-indigo-500/20'}`}>
                   {msg.sender === 'user' ? (
-                    <User className="w-4 h-4 text-indigo-600" />
+                    <User className="w-5 h-5 text-indigo-300" />
                   ) : (
-                    <Bot className="w-4 h-4 text-white" />
+                    <Bot className="w-5 h-5 text-white animate-pulse" />
                   )}
                 </div>
                 <div 
-                  className={`p-3 rounded-[16px] text-sm ${
+                  className={`p-4 rounded-[20px] text-sm leading-relaxed shadow-xl ${
                     msg.sender === 'user' 
-                      ? 'bg-indigo-600 text-white rounded-tr-[4px]' 
-                      : 'bg-white border border-gray-100 shadow-sm text-gray-800 rounded-tl-[4px]'
+                      ? 'bg-indigo-600 text-white rounded-tr-[4px] shadow-indigo-900/20' 
+                      : 'bg-slate-800/80 border border-white/5 text-slate-200 rounded-tl-[4px] backdrop-blur-md'
                   }`}
                 >
-                  <div className="whitespace-pre-wrap leading-relaxed">{parseMarkdown(msg.text)}</div>
-                  <span className={`text-[10px] block mt-1 ${msg.sender === 'user' ? 'text-indigo-200' : 'text-gray-400'}`}>
+                  <div className="whitespace-pre-wrap">{parseMarkdown(msg.text)}</div>
+                  <span className={`text-[10px] block mt-2 opacity-60 ${msg.sender === 'user' ? 'text-indigo-100' : 'text-slate-400'}`}>
                     {formatTime(msg.timestamp)}
                   </span>
                 </div>
@@ -252,8 +255,8 @@ export function Chatbot() {
           </div>
 
           {/* Input Area */}
-          <div className="p-4 bg-white border-t border-gray-100">
-            <form onSubmit={handleSendMessage} className="flex items-end gap-2">
+          <div className="p-5 bg-slate-900/50 border-t border-white/5 backdrop-blur-md">
+            <form onSubmit={handleSendMessage} className="flex items-end gap-3">
               <textarea
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
@@ -263,16 +266,16 @@ export function Chatbot() {
                     handleSendMessage(e);
                   }
                 }}
-                placeholder="Ask me anything..."
-                className="flex-1 max-h-[120px] min-h-[44px] resize-none rounded-[12px] border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                placeholder="Message AI Navigator..."
+                className="flex-1 max-h-[150px] min-h-[48px] resize-none rounded-[16px] border border-white/10 bg-slate-800/50 px-5 py-3.5 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/50 transition-all"
                 rows={1}
               />
               <button
                 type="submit"
                 disabled={!inputMessage.trim() || isLoading}
-                className="w-11 h-11 shrink-0 rounded-[12px] bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-12 h-12 shrink-0 rounded-[16px] bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-indigo-500/30 active:scale-95"
               >
-                <Send className="w-5 h-5 ml-0.5" />
+                <Send className="w-5 h-5" />
               </button>
             </form>
           </div>

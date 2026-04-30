@@ -59,19 +59,24 @@ export function StudyPlanner({ onContinue }: StudyPlannerProps) {
   if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-10 h-10 animate-spin text-[#4F46E5]" /></div>;
 
   const renderTaskList = (taskList: Task[], type: 'learning' | 'revision') => (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {taskList.map(task => (
         <div key={task.id} onClick={() => toggleTask(task.id)}
-          className="rounded-[14px] p-4 cursor-pointer transition-all duration-200 hover:shadow-[0_8px_24px_rgba(79,70,229,0.15)]"
-          style={{ background: 'rgba(255, 255, 255, 0.9)', border: task.completed ? '2px solid #10B981' : type === 'revision' ? '2px solid #06B6D420' : '2px solid #4F46E520', opacity: task.completed ? 0.7 : 1 }}>
-          <div className="flex items-start gap-3">
-            <div className="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 transition-all duration-200"
-              style={{ background: task.completed ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.6)', boxShadow: 'inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.9)', border: task.completed ? '2px solid #10B981' : '2px solid #D1D5DB' }}>
-              {completing === task.id ? <Loader2 className="w-3 h-3 animate-spin text-[#4F46E5]" /> : task.completed && <CheckCircle2 className="w-4 h-4 text-[#10B981]" />}
+          className="rounded-[18px] p-5 cursor-pointer transition-all duration-300 hover:-translate-y-1 shadow-lg"
+          style={{ 
+            background: task.completed ? 'rgba(16, 185, 129, 0.1)' : 'rgba(30, 41, 59, 0.6)', 
+            border: task.completed ? '1px solid rgba(16, 185, 129, 0.3)' : type === 'revision' ? '1px solid rgba(45, 212, 191, 0.2)' : '1px solid rgba(129, 140, 248, 0.2)', 
+            opacity: task.completed ? 0.8 : 1,
+            boxShadow: task.completed ? '0 0 20px rgba(16, 185, 129, 0.05)' : 'none'
+          }}>
+          <div className="flex items-start gap-4">
+            <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 transition-all duration-300"
+              style={{ background: task.completed ? '#10B981' : 'rgba(15, 23, 42, 0.8)', border: task.completed ? 'none' : '2px solid rgba(255,255,255,0.1)' }}>
+              {completing === task.id ? <Loader2 className="w-3.5 h-3.5 animate-spin text-white" /> : task.completed && <CheckCircle2 className="w-4 h-4 text-white" />}
             </div>
             <div className="flex-1">
-              <div style={{ fontSize: '15px', fontWeight: 500, color: '#111827', textDecoration: task.completed ? 'line-through' : 'none' }}>{task.title}</div>
-              <div className="text-[#6B7280]" style={{ fontSize: '13px', marginTop: '2px' }}>{task.time}</div>
+              <div style={{ fontSize: '16px', fontWeight: 600, color: task.completed ? '#10B981' : '#F8FAFC', textDecoration: task.completed ? 'line-through' : 'none', opacity: task.completed ? 0.6 : 1 }}>{task.title}</div>
+              <div className="text-slate-400 font-medium" style={{ fontSize: '13px', marginTop: '3px' }}>{task.time}</div>
             </div>
           </div>
         </div>
@@ -81,43 +86,47 @@ export function StudyPlanner({ onContinue }: StudyPlannerProps) {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-12">
-      <div className="w-full max-w-5xl rounded-[20px] p-12 backdrop-blur-[30px] border border-white/30 shadow-[0_8px_32px_rgba(79,70,229,0.12)]" style={{ background: 'rgba(255, 255, 255, 0.7)' }}>
-        <div className="flex items-center justify-between mb-10">
+    <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-transparent">
+      <div className="w-full max-w-5xl rounded-[32px] p-12 backdrop-blur-[40px] border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.5)]" style={{ background: 'rgba(15, 23, 42, 0.7)' }}>
+        <div className="flex items-center justify-between mb-10 relative">
+          <div className="absolute -top-10 -left-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-[60px]" />
           <div>
-            <h2 style={{ fontFamily: 'Manrope, sans-serif', fontSize: '32px', fontWeight: 700, color: '#111827', marginBottom: '6px' }}>Today's Study Plan</h2>
-            <p className="text-[#6B7280]" style={{ fontSize: '16px' }}>{today}</p>
+            <h2 className="bg-gradient-to-r from-white to-indigo-300 bg-clip-text text-transparent" style={{ fontFamily: 'Inter, sans-serif', fontSize: '36px', fontWeight: 800, marginBottom: '6px' }}>Neural Study Sequence</h2>
+            <p className="text-slate-400" style={{ fontSize: '16px' }}>{today}</p>
           </div>
-          <div className="px-6 py-3 rounded-[14px]" style={{ background: 'linear-gradient(135deg, #4F46E515 0%, #4F46E508 100%)', border: '2px solid #4F46E530' }}>
-            <div style={{ fontSize: '24px', fontWeight: 700, color: '#4F46E5' }}>{tasks.filter(t => t.completed).length}/{tasks.length}</div>
-            <div style={{ fontSize: '12px', color: '#6B7280' }}>Completed</div>
+          <div className="px-6 py-4 rounded-[20px] shadow-lg relative overflow-hidden" style={{ background: 'rgba(30, 41, 59, 0.6)', border: '1px solid rgba(129, 140, 248, 0.3)' }}>
+            <div className="absolute inset-0 bg-indigo-500/5" />
+            <div className="relative z-10 text-center">
+              <div style={{ fontSize: '28px', fontWeight: 800, color: '#818CF8' }}>{tasks.filter(t => t.completed).length}/{tasks.length}</div>
+              <div style={{ fontSize: '11px', fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Modules Active</div>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           <div>
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 rounded-[12px] flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)', boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)' }}>
-                <BookOpen className="w-5 h-5 text-white" />
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-11 h-11 rounded-[16px] flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #818CF8 100%)', boxShadow: '0 0 20px rgba(129, 140, 248, 0.3)' }}>
+                <BookOpen className="w-6 h-6 text-white" />
               </div>
-              <h3 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '20px', fontWeight: 600, color: '#111827' }}>🆕 New Learning</h3>
+              <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '22px', fontWeight: 700, color: '#F8FAFC' }}>New Protocols</h3>
             </div>
             {renderTaskList(learningTasks, 'learning')}
           </div>
 
           <div>
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 rounded-[12px] flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #06B6D4 0%, #0891B2 100%)', boxShadow: '0 4px 12px rgba(6, 182, 212, 0.3)' }}>
-                <RefreshCw className="w-5 h-5 text-white" />
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-11 h-11 rounded-[16px] flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #06B6D4 0%, #2DD4BF 100%)', boxShadow: '0 0 20px rgba(45, 212, 191, 0.3)' }}>
+                <RefreshCw className="w-6 h-6 text-white" />
               </div>
-              <h3 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '20px', fontWeight: 600, color: '#111827' }}>🔁 Revision</h3>
+              <h3 style={{ fontFamily: 'Inter, sans-serif', fontSize: '22px', fontWeight: 700, color: '#F8FAFC' }}>Revision Cycle</h3>
             </div>
             {renderTaskList(revisionTasks, 'revision')}
           </div>
         </div>
 
-        <button onClick={onContinue} className="w-full mt-10 py-4 rounded-[16px] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_12px_40px_rgba(79,70,229,0.3)]" style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)', color: 'white', fontSize: '16px', fontWeight: 600, boxShadow: '0 8px 24px rgba(79, 70, 229, 0.25)' }}>
-          View Full Dashboard
+        <button onClick={onContinue} className="w-full mt-12 py-4.5 rounded-[18px] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(129,140,248,0.4)] shadow-xl" style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #818CF8 100%)', color: 'white', fontSize: '16px', fontWeight: 700 }}>
+          Access Central Hub
         </button>
       </div>
     </div>

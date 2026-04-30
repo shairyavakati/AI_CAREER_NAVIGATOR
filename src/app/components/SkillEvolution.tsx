@@ -44,54 +44,60 @@ export function SkillEvolution() {
   if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-10 h-10 animate-spin text-[#4F46E5]" /></div>;
 
   return (
-    <div className="min-h-screen px-6 py-12">
+    <div className="min-h-screen px-6 py-12 bg-transparent overflow-x-hidden">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <div className="w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)', boxShadow: '0 12px 40px rgba(79, 70, 229, 0.4)' }}>
+        <div className="text-center mb-16 relative">
+          <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-48 h-48 bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none" />
+          <div className="w-24 h-24 rounded-[32px] mx-auto mb-8 flex items-center justify-center relative z-10" style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #818CF8 100%)', boxShadow: '0 0 50px rgba(129, 140, 248, 0.4)', transform: 'rotate(10deg)' }}>
             <TrendingUp className="w-12 h-12 text-white" />
           </div>
-          <h2 style={{ fontFamily: 'Manrope, sans-serif', fontSize: '40px', fontWeight: 700, color: '#111827', marginBottom: '8px' }}>Skill Evolution Timeline</h2>
-          <p className="text-[#6B7280]" style={{ fontSize: '18px' }}>Track your journey from beginner to expert</p>
+          <h2 className="bg-gradient-to-r from-white to-indigo-300 bg-clip-text text-transparent" style={{ fontFamily: 'Inter, sans-serif', fontSize: '48px', fontWeight: 800, marginBottom: '8px' }}>Neural Evolution Timeline</h2>
+          <p className="text-slate-400 font-medium" style={{ fontSize: '18px' }}>Quantifying your cognitive transformation through the digital landscape</p>
         </div>
 
         {/* Growth Card */}
-        <div className="mb-10 rounded-[20px] p-8 backdrop-blur-[30px] border border-white/30 shadow-[0_8px_32px_rgba(79,70,229,0.12)]" style={{ background: 'rgba(255, 255, 255, 0.75)' }}>
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center gap-6">
-              <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)', boxShadow: '0 8px 24px rgba(16, 185, 129, 0.4)' }}>
+        <div className="mb-12 rounded-[32px] p-10 backdrop-blur-[40px] border border-white/10 shadow-[0_0_80px_rgba(16,185,129,0.1)] relative overflow-hidden" style={{ background: 'rgba(30, 41, 59, 0.5)' }}>
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent" />
+          <div className="flex items-center justify-between flex-wrap gap-8 relative z-10">
+            <div className="flex items-center gap-8">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center relative" style={{ background: 'linear-gradient(135deg, #10B981 0%, #065F46 100%)', boxShadow: '0 0 40px rgba(16, 185, 129, 0.4)' }}>
                 <Award className="w-10 h-10 text-white" />
               </div>
               <div>
-                <div className="text-[#6B7280] mb-1" style={{ fontSize: '14px', fontWeight: 500 }}>Overall Skill Growth</div>
-                <div style={{ fontSize: '36px', fontWeight: 700, color: '#10B981' }}>+{growth}%</div>
+                <div className="text-slate-400 font-bold uppercase tracking-widest mb-1" style={{ fontSize: '12px' }}>Total Cognitive Expansion</div>
+                <div style={{ fontSize: '42px', fontWeight: 800, color: '#10B981', textShadow: '0 0 20px rgba(16, 185, 129, 0.3)' }}>+{growth}%</div>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-[#6B7280] mb-1" style={{ fontSize: '14px', fontWeight: 500 }}>🔥 You improved {growth}% overall!</div>
-              <div style={{ fontSize: '20px', fontWeight: 600, color: '#111827' }}>Keep it up!</div>
+              <div className="text-slate-400 font-medium mb-1" style={{ fontSize: '15px' }}>Neural plasticity increased by {growth}%</div>
+              <div className="text-white font-bold" style={{ fontSize: '20px' }}>Trajectory: Optimal</div>
             </div>
           </div>
         </div>
 
         {/* Chart */}
-        <div className="rounded-[20px] p-10 backdrop-blur-[30px] border border-white/30 shadow-[0_8px_32px_rgba(79,70,229,0.12)] mb-10" style={{ background: 'rgba(255, 255, 255, 0.75)' }}>
-          <h3 className="mb-8" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '24px', fontWeight: 600, color: '#111827' }}>Multi-Skill Progress</h3>
+        <div className="rounded-[32px] p-10 backdrop-blur-[40px] border border-white/10 shadow-2xl mb-12 relative overflow-hidden" style={{ background: 'rgba(30, 41, 59, 0.4)' }}>
+          <h3 className="mb-10 text-white" style={{ fontFamily: 'Inter, sans-serif', fontSize: '24px', fontWeight: 800 }}>Proficiency Telemetry</h3>
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis dataKey="month" stroke="#6B7280" style={{ fontSize: '14px', fontWeight: 500 }} />
-              <YAxis stroke="#6B7280" style={{ fontSize: '14px', fontWeight: 500 }} />
-              <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.95)', border: '1px solid rgba(79,70,229,0.2)', borderRadius: '16px', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', padding: '12px' }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+              <XAxis dataKey="month" stroke="#64748B" style={{ fontSize: '13px', fontWeight: 600 }} tickLine={false} axisLine={false} dy={10} />
+              <YAxis stroke="#64748B" style={{ fontSize: '13px', fontWeight: 600 }} tickLine={false} axisLine={false} />
+              <Tooltip 
+                contentStyle={{ background: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', boxShadow: '0 20px 50px rgba(0,0,0,0.5)', backdropFilter: 'blur(15px)' }}
+                itemStyle={{ fontWeight: 700, fontSize: '14px' }}
+                labelStyle={{ color: '#94A3B8', marginBottom: '8px', fontWeight: 600 }}
+              />
               {skillNames.map((name, i) => (
-                <Line key={name} type="monotone" dataKey={name} stroke={COLORS[i % COLORS.length]} strokeWidth={3} dot={{ fill: COLORS[i % COLORS.length], r: 6 }} name={name} />
+                <Line key={name} type="monotone" dataKey={name} stroke={COLORS[i % COLORS.length]} strokeWidth={4} dot={{ fill: COLORS[i % COLORS.length], r: 5, strokeWidth: 0 }} activeDot={{ r: 8, strokeWidth: 0 }} name={name} />
               ))}
             </LineChart>
           </ResponsiveContainer>
-          <div className="flex flex-wrap gap-6 mt-8 justify-center">
+          <div className="flex flex-wrap gap-8 mt-10 justify-center">
             {skillNames.map((name, i) => (
-              <div key={name} className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded-full" style={{ background: COLORS[i % COLORS.length] }} />
-                <span style={{ fontSize: '14px', fontWeight: 500, color: '#6B7280' }}>{name}</span>
+              <div key={name} className="flex items-center gap-3 group cursor-default">
+                <div className="w-4 h-4 rounded-full shadow-[0_0_10px_currentColor]" style={{ background: COLORS[i % COLORS.length], color: COLORS[i % COLORS.length] }} />
+                <span className="text-slate-400 group-hover:text-white transition-colors" style={{ fontSize: '14px', fontWeight: 600 }}>{name}</span>
               </div>
             ))}
           </div>
@@ -99,20 +105,21 @@ export function SkillEvolution() {
 
         {/* Milestones */}
         {milestones.length > 0 && (
-          <div className="rounded-[20px] p-10 backdrop-blur-[30px] border border-white/30 shadow-[0_8px_32px_rgba(79,70,229,0.12)]" style={{ background: 'rgba(255, 255, 255, 0.75)' }}>
-            <h3 className="mb-8" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '24px', fontWeight: 600, color: '#111827' }}>Achievement Milestones</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="rounded-[32px] p-10 backdrop-blur-[40px] border border-white/10 shadow-2xl relative overflow-hidden" style={{ background: 'rgba(30, 41, 59, 0.4)' }}>
+            <h3 className="mb-10 text-white" style={{ fontFamily: 'Inter, sans-serif', fontSize: '24px', fontWeight: 800 }}>Neural Achievements</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {milestones.slice(0, 4).map((m, idx) => {
                 const color = COLORS[idx % COLORS.length];
                 return (
-                  <div key={idx} className="rounded-[18px] p-6 transition-all duration-300 hover:-translate-y-2" style={{ background: `linear-gradient(135deg, ${color}20 0%, ${color}10 100%)`, border: `2px solid ${color}30` }}>
-                    <div className="text-center">
-                      <div className="text-4xl mb-3">{m.icon}</div>
-                      <div className="px-3 py-1 rounded-full inline-block mb-3" style={{ background: `${color}20`, border: `1px solid ${color}40` }}>
-                        <span style={{ fontSize: '12px', fontWeight: 600, color }}>{m.month}</span>
+                  <div key={idx} className="rounded-[24px] p-8 transition-all duration-300 hover:-translate-y-2 group relative overflow-hidden" style={{ background: 'rgba(15, 23, 42, 0.4)', border: `1px solid rgba(255,255,255,0.05)` }}>
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="text-center relative z-10">
+                      <div className="text-5xl mb-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">{m.icon}</div>
+                      <div className="px-4 py-1.5 rounded-full inline-block mb-4" style={{ background: `${color}20`, border: `1px solid ${color}40` }}>
+                        <span style={{ fontSize: '11px', fontWeight: 800, color, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{m.month}</span>
                       </div>
-                      <h4 style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '16px', fontWeight: 600, color: '#111827', marginBottom: '4px' }}>{m.skill}</h4>
-                      <p style={{ fontSize: '13px', color: '#6B7280', lineHeight: '1.4' }}>{m.achievement}</p>
+                      <h4 className="text-white font-bold mb-2" style={{ fontFamily: 'Inter, sans-serif', fontSize: '18px' }}>{m.skill}</h4>
+                      <p className="text-slate-400 text-sm leading-relaxed font-medium">{m.achievement}</p>
                     </div>
                   </div>
                 );
