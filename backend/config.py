@@ -9,3 +9,5 @@ class Config:
     SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
     JWT_SECRET = os.getenv("JWT_SECRET", "dev-secret-change-in-production")
     FLASK_SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "dev-flask-secret")
+    GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+

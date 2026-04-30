@@ -17,7 +17,7 @@ function clearToken() {
   localStorage.removeItem('auth_token');
 }
 
-function getToken(): string | null {
+export function getToken(): string | null {
   return authToken;
 }
 

@@ -14,6 +14,7 @@ import { RevisionSystemVisual } from './components/RevisionSystemVisual';
 import { SkillEvolution } from './components/SkillEvolution';
 import { ResourceRecommendation } from './components/ResourceRecommendation';
 import { EducationDetails } from './components/EducationDetails';
+import { Chatbot } from './components/Chatbot';
 import { BarChart3, Trophy, Calendar, Home, BookOpen, TrendingUp, Library, Zap, Menu, X, LogOut } from 'lucide-react';
 import { isLoggedIn, logout, getProfile } from './api';
 
@@ -250,6 +251,9 @@ export default function App() {
           )}
         </>
       )}
+
+      {/* RAG Chatbot Integration */}
+      <Chatbot />
     </div>
   );
 }

@@ -19,6 +19,7 @@ from routes.revision import revision_bp
 from routes.motivation import motivation_bp
 from routes.resources import resources_bp
 from routes.skill_evolution import skill_evolution_bp
+from routes.chatbot import chatbot_bp
 
 
 def create_app():
@@ -48,6 +49,7 @@ def create_app():
     app.register_blueprint(motivation_bp, url_prefix="/api/motivation")
     app.register_blueprint(resources_bp, url_prefix="/api/resources")
     app.register_blueprint(skill_evolution_bp, url_prefix="/api/skill-evolution")
+    app.register_blueprint(chatbot_bp, url_prefix="/api/chatbot")
 
     # Health check and root
     @app.route("/")
@@ -64,3 +66,4 @@ def create_app():
 if __name__ == "__main__":
     app = create_app()
     app.run(debug=True, port=5000)
+     
